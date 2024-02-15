@@ -31,7 +31,7 @@ AmazonS3_node1707466350365 = glueContext.create_dynamic_frame.from_options(
     },
     connection_type="s3",
     format="csv",
-    connection_options={"paths": ["s3://finalprojectinput/sales/to_test_incremental_load/"], "recurse": True},
+    connection_options={"paths": ["s3://flipkart-project-input/sales_input/"], "recurse": True},
     transformation_ctx="AmazonS3_node1707466350365",
 )
 
@@ -79,7 +79,7 @@ SQLQuery_node1707466387997 = sparkSqlQuery(
 
 # Script generated for node Amazon S3
 AmazonS3_node1707466390637 = glueContext.getSink(
-    path="s3://finalprojectinput/sales_output_increment/",
+    path="s3://flipkart-project-input/sales_output/",
     connection_type="s3",
     updateBehavior="UPDATE_IN_DATABASE",  # Using Glue Job Bookmark for update behavior
     partitionKeys=[],
@@ -87,7 +87,7 @@ AmazonS3_node1707466390637 = glueContext.getSink(
     transformation_ctx="AmazonS3_node1707466390637",
 )
 AmazonS3_node1707466390637.setCatalogInfo(
-    catalogDatabase="flipkart_testing", catalogTableName="SALES_Increment"
+    catalogDatabase="flipkart_database", catalogTableName="sales"
 )
 AmazonS3_node1707466390637.setFormat("glueparquet", compression="uncompressed")
 AmazonS3_node1707466390637.writeFrame(SQLQuery_node1707466387997)
