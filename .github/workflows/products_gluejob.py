@@ -64,7 +64,7 @@ AmazonS3_node1707851543977 = glueContext.write_dynamic_frame.from_options(
     connection_type="s3",
     format="glueparquet",
     connection_options={
-        "path": "s3://finalprojectinput/product output/",
+        "path": "s3://flipkart-project-input/product_output/",
         "partitionKeys": [],
     },
     format_options={"compression": "uncompressed"},
