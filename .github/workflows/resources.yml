@@ -22,6 +22,7 @@ Resources:
       Role: arn:aws:iam::948501703392:role/LabRole
       Timeout: 90
       WorkerType: G.1X
+      Connections: Jdbc connection
       Command:
         Name: glueetl
         ScriptLocation: s3://pract-buck/destination_file/productjob/Products_Glue_Job.py
