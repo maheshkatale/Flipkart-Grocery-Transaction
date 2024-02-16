@@ -10,7 +10,7 @@ Resources:
       MaxConcurrentRuns: 1
       Name: jobworkflow
 
-  GlueJobImport1:
+  GlueJobImport:
     Type: AWS::Glue::Job
     Properties:
       Name: product_gluejob
@@ -39,34 +39,34 @@ Resources:
         - JobName: !Ref GlueJobImport
       WorkflowName: !Ref WorkflowJob
 
-  GlueJobImport2:
-    Type: AWS::Glue::Job
-    Properties:
-      Name: sales_gluejob
-      Description: gluejob for sales data stored in S3
-      ExecutionClass: FLEX
-      GlueVersion: 4.0
-      MaxRetries: 0
-      NumberOfWorkers: 6
-      Role: arn:aws:iam::948501703392:role/LabRole
-      Timeout: 90
-      WorkerType: G.1X
-      Command:
-        Name: glueetl
-        ScriptLocation: s3://pract-buck/destination_file/productjob/Products_Glue_Job.py
-      DefaultArguments:
-        "--job-bookmark-option": "job-bookmark-enable"
+  # GlueJobImport2:
+  #   Type: AWS::Glue::Job
+  #   Properties:
+  #     Name: sales_gluejob
+  #     Description: gluejob for sales data stored in S3
+  #     ExecutionClass: FLEX
+  #     GlueVersion: 4.0
+  #     MaxRetries: 0
+  #     NumberOfWorkers: 6
+  #     Role: arn:aws:iam::948501703392:role/LabRole
+  #     Timeout: 90
+  #     WorkerType: G.1X
+  #     Command:
+  #       Name: glueetl
+  #       ScriptLocation: s3://pract-buck/destination_file/productjob/Products_Glue_Job.py
+  #     DefaultArguments:
+  #       "--job-bookmark-option": "job-bookmark-enable"
 
     
-  WorkflowStartTrigger:
-    Type: AWS::Glue::Trigger
-    Properties:
-      Name: StartTrigger
-      Type: ON_DEMAND
-      Description: Trigger for starting the workflow
-      Actions:
-        - JobName: !Ref GlueJobImport
-      WorkflowName: !Ref WorkflowJob
+  # WorkflowStartTrigger:
+  #   Type: AWS::Glue::Trigger
+  #   Properties:
+  #     Name: StartTrigger
+  #     Type: ON_DEMAND
+  #     Description: Trigger for starting the workflow
+  #     Actions:
+  #       - JobName: !Ref GlueJobImport
+  #     WorkflowName: !Ref WorkflowJob
 
       
   # MyAthenaWorkGroup:
