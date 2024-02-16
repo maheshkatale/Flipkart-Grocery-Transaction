@@ -10,11 +10,11 @@ Resources:
       MaxConcurrentRuns: 1
       Name: jobworkflow
 
-  GlueJobImport:
+  GlueJobImport1:
     Type: AWS::Glue::Job
     Properties:
-      Name: data-ingestion1
-      Description: Ingests data from s3 and writes it as a parquet file to the data lake
+      Name: product_gluejob
+      Description: gluejob for product data stored in RDS
       ExecutionClass: FLEX
       GlueVersion: 4.0
       MaxRetries: 0
@@ -39,17 +39,134 @@ Resources:
         - JobName: !Ref GlueJobImport
       WorkflowName: !Ref WorkflowJob
 
-
-  MyAthenaWorkGroup:
-    Type: AWS::Athena::WorkGroup
+  GlueJobImport2:
+    Type: AWS::Glue::Job
     Properties:
-        Name: gitworkgrp
-        Description: workgroup for Athena
-        State: ENABLED
-        WorkGroupConfiguration:
-          BytesScannedCutoffPerQuery: 200000000
-          EnforceWorkGroupConfiguration: false
-          PublishCloudWatchMetricsEnabled: true
-          RequesterPaysEnabled: true
-          ResultConfiguration:
-            OutputLocation: s3://newbkt123/Athena_Queries/    
+      Name: sales_gluejob
+      Description: gluejob for sales data stored in S3
+      ExecutionClass: FLEX
+      GlueVersion: 4.0
+      MaxRetries: 0
+      NumberOfWorkers: 6
+      Role: arn:aws:iam::948501703392:role/LabRole
+      Timeout: 90
+      WorkerType: G.1X
+      Command:
+        Name: glueetl
+        ScriptLocation: s3://pract-buck/destination_file/productjob/Products_Glue_Job.py
+      DefaultArguments:
+        "--job-bookmark-option": "job-bookmark-enable"
+
+    
+  WorkflowStartTrigger:
+    Type: AWS::Glue::Trigger
+    Properties:
+      Name: StartTrigger
+      Type: ON_DEMAND
+      Description: Trigger for starting the workflow
+      Actions:
+        - JobName: !Ref GlueJobImport
+      WorkflowName: !Ref WorkflowJob
+
+      
+  # MyAthenaWorkGroup:
+  #   Type: AWS::Athena::WorkGroup
+  #   Properties:
+  #       Name: gitworkgrp
+  #       Description: workgroup for Athena
+  #       State: ENABLED
+  #       WorkGroupConfiguration:
+  #         BytesScannedCutoffPerQuery: 200000000
+  #         EnforceWorkGroupConfiguration: false
+  #         PublishCloudWatchMetricsEnabled: true
+  #         RequesterPaysEnabled: true
+  #         ResultConfiguration:
+  #           OutputLocation: s3://newbkt123/Athena_Queries/    
+
+# AWSTemplateFormatVersion: "2010-09-09"
+
+# Resources:
+#   SourceBucket:
+#     Type: AWS::S3::Bucket
+#     Properties:
+#       BucketName: group05datalake
+
+#   DestinationBucket:
+#     Type: AWS::S3::Bucket
+#     Properties:
+#       BucketName: group05datawarehouse
+
+#   IngestionGlueJob:
+#     Type: AWS::Glue::Job
+#     Properties:
+#       Name: nyc-ingestion
+#       Role: arn:aws:iam::843541387255:role/LabRole
+#       GlueVersion: 4.0
+#       NumberOfWorkers: 5
+#       Timeout: 120
+#       WorkerType: G.1X
+#       Command:
+#         Name: glueetl
+#         ScriptLocation: s3://scriptsgroup5/datainjation.py
+#       DefaultArguments:
+#         "--job-language": "python"
+#       ExecutionProperty:
+#         MaxConcurrentRuns: 1
+
+#   TransformationGlueJob:
+#     Type: AWS::Glue::Job
+#     Properties:
+#       Name: nyc-transformation
+#       Role: arn:aws:iam::843541387255:role/LabRole
+#       GlueVersion: 4.0
+#       NumberOfWorkers: 5
+#       Timeout: 240
+#       WorkerType: G.1X
+#       Command:
+#         Name: glueetl
+#         ScriptLocation: s3://scriptsgroup5/transformation.py
+#       DefaultArguments:
+#         "--job-language": "python"
+#       ExecutionProperty:
+#         MaxConcurrentRuns: 1
+
+#   GlueWorkflow:
+#     Type: AWS::Glue::Workflow
+#     Properties:
+#       Description: ETL Job
+#       MaxConcurrentRuns: 1
+#       Name: nyc-workflow
+
+#   GlueTriggerImport:
+#     Type: AWS::Glue::Trigger
+#     DependsOn:
+#       - GlueWorkflow
+#       - IngestionGlueJob
+#     Properties:
+#       Actions:
+#         - JobName: !Ref IngestionGlueJob
+#       Description: Triggers the Import Jobs
+#       Name: gluetriggerimport
+#       Type: EVENT
+#       WorkflowName: nyc-workflow
+
+#   GlueTriggerTransform:
+#     Type: AWS::Glue::Trigger
+#     DependsOn:
+#       - GlueWorkflow
+#       - TransformationGlueJob
+#       - GlueTriggerImport
+#     Properties:
+#       Actions:
+#         - JobName: !Ref TransformationGlueJob
+#       Description: Triggers the transformation job
+#       Name: gluetriggertransform
+#       Predicate:
+#         Conditions:
+#           - JobName: !Ref IngestionGlueJob
+#             LogicalOperator: EQUALS
+#             State: SUCCEEDED
+#         Logical: AND
+#       Type: CONDITIONAL
+#       StartOnCreation: True
+#       WorkflowName: nyc-workflow
