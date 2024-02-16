@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Upload PyScripts to S3 Bucket
+      - name: Upload Scripts to S3 Bucket
         run: |
           aws s3 cp .github/workflows/products_gluejob.py s3://pract-buck/destination_file/productjob/
           aws s3 cp .github/workflows/sales_gluejob.py s3://pract-buck/destination_file/salesjob/
@@ -26,7 +26,7 @@ jobs:
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --stack-name ProjectStack \
+            --stack-name AutomateStack \
             --template-file .github/workflows/resources.yml \
             --capabilities CAPABILITY_IAM
         env:
@@ -34,12 +34,30 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-
-      - name: Run glue workflow
+          
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+  
+      - name: Install AWS CLI
         run: |
-          aws glue start-workflow-run --name jobworkflow
+          pip install awscli
+
+      - name: Run Glue Job for Sales
+        run: |
+          aws glue start-job-run --region us-east-1 --job-name Sales_Glue_Job
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+      - name: Run Glue Job for Products
+        run: |
+          aws glue start-job-run --region us-east-1 --job-name Product_Glue_Job
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
