@@ -16,6 +16,7 @@ jobs:
       - name: Upload PyScripts to S3 Bucket
         run: |
           aws s3 cp .github/workflows/products_gluejob.py s3://pract-buck/destination_file/
+          aws s3 cp .github/workflows/sales_gluejob.py s3://pract-buck/destination_file/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
