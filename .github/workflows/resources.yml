@@ -24,7 +24,7 @@ Resources:
       WorkerType: G.1X
       Command:
         Name: glueetl
-        ScriptLocation: s3://finalprojectinput/github/products/Products_Glue_Job.py
+        ScriptLocation: s3://pract-buck/destination_file/salesjob/Products_Glue_Job.py
       DefaultArguments:
         "--job-bookmark-option": "job-bookmark-enable"
 
@@ -32,12 +32,12 @@ Resources:
     WorkflowStartTrigger:
       Type: AWS::Glue::Trigger
       Properties:
-      Name: StartTrigger
-      Type: ON_DEMAND
-      Description: Trigger for starting the workflow
-      Actions:
-        - JobName: !Ref GlueJobImport
-      WorkflowName: !Ref WorkflowJob
+        Name: StartTrigger
+        Type: ON_DEMAND
+        Description: Trigger for starting the workflow
+        Actions:
+          - JobName: !Ref GlueJobImport
+        WorkflowName: !Ref WorkflowJob
 
 
       MyAthenaWorkGroup:
@@ -52,4 +52,4 @@ Resources:
                 PublishCloudWatchMetricsEnabled: true
                 RequesterPaysEnabled: true
                 ResultConfiguration:
-                    OutputLocation: s3://group04output/Query/    
+                    OutputLocation: s3://newbkt123/Athena_Queries/    
