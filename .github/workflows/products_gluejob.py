@@ -59,15 +59,17 @@ ChangeSchema_node1707477382758 = ApplyMapping.apply(
 
 
 # Script generated for node Amazon S3
-AmazonS3_node1707851543977 = glueContext.write_dynamic_frame.from_options(
-    frame=ChangeSchema_node1707477382758,
+AmazonS3_node1708110424343 = glueContext.getSink(
+    path="s3://flipkart-project-input/product_output/",
     connection_type="s3",
-    format="glueparquet",
-    connection_options={
-        "path": "s3://flipkart-project-input/product_output/",
-        "partitionKeys": [],
-    },
-    format_options={"compression": "uncompressed"},
-    transformation_ctx="AmazonS3_node1707851543977",
+    updateBehavior="LOG",
+    partitionKeys=[],
+    enableUpdateCatalog=True,
+    transformation_ctx="AmazonS3_node1708110424343",
 )
+AmazonS3_node1708110424343.setCatalogInfo(
+    catalogDatabase="flipkart_database", catalogTableName="products"
+)
+AmazonS3_node1708110424343.setFormat("glueparquet", compression="uncompressed")
+AmazonS3_node1708110424343.writeFrame(ChangeSchema_node1707477382758)
 job.commit()
