@@ -60,8 +60,8 @@ SELECT
     SUM(procured_quantity) OVER (PARTITION BY product_id) AS Total_Quantity_Sold,
     SUM(procured_quantity * unit_selling_price) OVER (PARTITION BY product_id) AS Total_Sales,
     (procured_quantity * unit_selling_price - total_discount_amount) AS Total_Revenue,
-    ROUND((total_discount_amount / unit_selling_price) * 100) AS Discount_Percentage,
-    ROUND(((unit_selling_price - total_discount_amount) / unit_selling_price) * 100) AS Profit_Margin
+    ROUND((total_discount_amount / (unit_selling_price * procured_quantity)) * 100) AS Discount_Percentage,
+    ROUND(((((procured_quantity * unit_selling_price)-total_discount_amount) - total_weighted_landing_price) / (procured_quantity * unit_selling_price)) * 100) AS Profit_Margin
 FROM
     myDataSource;
 """
