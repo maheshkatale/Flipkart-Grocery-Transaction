@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Globals:
-  Function:
-    MemorySize: 128
-    Timeout: 15
+
 Description: "Create AWS Resources"
 
 Resources:
