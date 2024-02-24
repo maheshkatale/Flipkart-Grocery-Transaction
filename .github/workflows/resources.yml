@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    MemorySize: 128
+    Timeout: 15
 Description: "Create AWS Resources"
 
 Resources:
@@ -69,3 +73,12 @@ Resources:
       Principal: s3.amazonaws.com
       SourceArn: 
         Fn::Sub: arn:aws:s3:::flipkart-grocery-sales
+
+  LambdaInvokePermissionSales:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref MyLambdaCFT
+      Principal: s3.amazonaws.com
+      SourceArn: 
+        Fn::Sub: arn:aws:s3:::flipkart-grocery-sales/sales/
