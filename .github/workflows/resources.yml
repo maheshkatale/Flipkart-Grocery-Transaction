@@ -1,5 +1,4 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
     MemorySize: 128
@@ -15,7 +14,7 @@ Resources:
       ExecutionClass: FLEX
       GlueVersion: 4.0
       MaxRetries: 0
-      NumberOfWorkers: 6
+      NumberOfWorkers: 8
       Role: arn:aws:iam::948501703392:role/LabRole
       Timeout: 90
       WorkerType: G.1X
@@ -43,11 +42,33 @@ Resources:
       DefaultArguments:
         "--job-bookmark-option": "job-bookmark-enable"
   
+  GlueJobNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "Glue Job Notification Topic"
+      Subscription:
+        - Protocol: email
+          Endpoint: maheshkatale202021@gmail.com
+
   MyLambdaCFT:
-    Type: AWS::Serverless::Function
+    Type: AWS::Lambda::Function
     Properties:
       FunctionName: Sales-CFT-Trigger
-      CodeUri: s3://pract-buck/destination_file/lambda/lambda_function.zip
+      Code:
+        S3Bucket: flipkart-dataset
+        S3Key: scripts/lambda_function.zip
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       Role: arn:aws:iam::948501703392:role/LabRole
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref GlueJobNotificationTopic
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref MyLambdaCFT
+      Principal: s3.amazonaws.com
+      SourceArn: 
+        Fn::Sub: arn:aws:s3:::flipkart-grocery-sales
