@@ -1,9 +1,4 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Transform: AWS::Serverless-2016-10-31
-Globals:
-  Function:
-    MemorySize: 128
-    Timeout: 15
 Description: "Create AWS Resources"
 
 Resources:
@@ -52,10 +47,24 @@ Resources:
           Endpoint: maheshkatale202021@gmail.com
 
   MyLambdaCFT:
-    Type: AWS::Serverless::Function
+    Type: AWS::Lambda::Function
     Properties:
       FunctionName: Sales-CFT-Trigger
-      CodeUri: s3://pract-buck/destination_file/lambda/lambda_function.zip
+      Code:
+        S3Bucket: pract-buck
+        S3Key: destination_file/lambda/lambda_function.zip
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       Role: arn:aws:iam::948501703392:role/LabRole
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref GlueJobNotificationTopic
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref MyLambdaCFT
+      Principal: s3.amazonaws.com
+      SourceArn: 
+        Fn::Sub: arn:aws:s3:::flipkart-grocery-sales
