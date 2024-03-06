@@ -1,46 +1,46 @@
-# name: AWS Resource Creation
+name: AWS Resource Creation
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-# jobs:
-#   Deploy_CFT:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
+jobs:
+  Deploy_CFT:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-#       - name: Upload Scripts to S3 Bucket
-#         run: |
-#           aws s3 cp .github/workflows/products_gluejob.py s3://pract-buck/destination_file/productjob/
-#           aws s3 cp .github/workflows/sales_gluejob.py s3://pract-buck/destination_file/salesjob/
-#           aws s3 cp .github/workflows/lambda_function.zip s3://pract-buck/destination_file/lambda/
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_DEFAULT_REGION: us-east-1
-#           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      - name: Upload Scripts to S3 Bucket
+        run: |
+          aws s3 cp .github/workflows/products_gluejob.py s3://pract-buck/destination_file/productjob/
+          aws s3 cp .github/workflows/sales_gluejob.py s3://pract-buck/destination_file/salesjob/
+          aws s3 cp .github/workflows/lambda_function.zip s3://pract-buck/destination_file/lambda/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-#       - name: Deploy CloudFormation stack
-#         run: |
-#           aws cloudformation deploy \
-#             --stack-name AutomateStack \
-#             --template-file .github/workflows/resources.yml \
-#             --capabilities CAPABILITY_IAM
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_DEFAULT_REGION: us-east-1
-#           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name AutomateStack \
+            --template-file .github/workflows/resources.yml \
+            --capabilities CAPABILITY_IAM
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-#       - name: Run Glue Job for Products
-#         run: |
-#           aws glue start-job-run --region us-east-1 --job-name Product_Glue_Job
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_DEFAULT_REGION: us-east-1
-#           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      - name: Run Glue Job for Products
+        run: |
+          aws glue start-job-run --region us-east-1 --job-name Product_Glue_Job
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
