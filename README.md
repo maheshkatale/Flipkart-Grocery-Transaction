@@ -24,7 +24,7 @@ In this comprehensive Big Data project, we delve into the Flipkart Grocery trans
 ## How to Use
 - **Clone Repository:**
   
-gh repo clone omthemadlad/BDT-Flipkart_Data_Analysis_Glue_RDS_S3_Athena
+gh repo clone maheshkatale/Flipkart-Grocery-Transaction
 
 ## Deployment Steps
 Prerequisites:
